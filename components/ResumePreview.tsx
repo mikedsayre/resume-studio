@@ -4,6 +4,7 @@ import { StylePreset, StyleClasses } from '../types';
 interface ResumePreviewProps {
   markdown: string;
   stylePreset: StylePreset;
+  customCss: string;
 }
 
 // A simple markdown to HTML converter.
@@ -86,8 +87,34 @@ const convertMarkdownToHtml = (markdown: string, classes: StyleClasses): string 
   return html;
 };
 
+// Utility function to prefix CSS selectors
+const prefixCss = (css: string, prefixSelector: string): string => {
+  if (!css) return '';
+
+  // This regex attempts to match CSS rules (selector { ... }) and prepend the prefixSelector.
+  // It handles multiple selectors separated by commas for a single rule.
+  // It's a simplification and might not handle all complex CSS cases (e.g., @media, @keyframes, nested selectors)
+  // but should cover common element, class, and ID selectors for styling resume content.
+  // It also tries to avoid double-prefixing.
+  return css.replace(/(^|\})(?:[^{]*?){/g, (match, p1) => {
+    const selectorPart = match.substring(p1.length, match.indexOf('{')).trim();
+    if (!selectorPart) return match; // skip if no selector found
+
+    const prefixedSelectors = selectorPart.split(',').map(s => {
+      const trimmed = s.trim();
+      if (!trimmed || trimmed.startsWith(prefixSelector)) {
+        return trimmed; // keep original if empty or already prefixed
+      }
+      return `${prefixSelector} ${trimmed}`; // prepend prefix
+    }).filter(Boolean).join(', ');
+
+    return `${p1}${prefixedSelectors}{`;
+  });
+};
+
+
 const ResumePreview = React.forwardRef<HTMLDivElement, ResumePreviewProps>(
-  ({ markdown, stylePreset }, ref) => {
+  ({ markdown, stylePreset, customCss }, ref) => {
     const { classes } = stylePreset;
 
     // Memoize the HTML generation to avoid unnecessary re-renders if markdown or classes don't change.
@@ -95,19 +122,27 @@ const ResumePreview = React.forwardRef<HTMLDivElement, ResumePreviewProps>(
       return convertMarkdownToHtml(markdown, classes);
     }, [markdown, classes]);
 
+    // Combine custom CSS with rendered HTML, injecting custom CSS as an inline <style> tag
+    const finalContent = useMemo(() => {
+      // Prefix custom CSS with a unique class to scope it to the preview area
+      const prefixedCustomCss = prefixCss(customCss, '.resume-preview-root');
+      const styleTag = prefixedCustomCss ? `<style>${prefixedCustomCss}</style>` : '';
+      return `${styleTag}${renderedHtml}`;
+    }, [renderedHtml, customCss]);
+
     useEffect(() => {
       // This effect ensures that the DOM element for PDF export is updated
       // after markdown content or styles change.
       // No direct DOM manipulation needed here, as React handles it via dangerouslySetInnerHTML.
       // This hook primarily ensures `ref.current` is fresh.
-    }, [renderedHtml]);
+    }, [renderedHtml, customCss]);
 
     return (
       <div
         ref={ref}
         className={`w-full flex-1 p-8 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700
-                   rounded-lg shadow-lg overflow-y-auto transition-colors duration-300 ${classes.base || ''}`}
-        dangerouslySetInnerHTML={{ __html: renderedHtml }}
+                   rounded-lg shadow-lg overflow-y-auto transition-colors duration-300 ${classes.base || ''} resume-preview-root`}
+        dangerouslySetInnerHTML={{ __html: finalContent }}
       />
     );
   }

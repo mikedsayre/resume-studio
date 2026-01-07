@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Resume Editor</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for a futuristic look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* dark gray */
+        }
+        html.light ::-webkit-scrollbar-track {
+            background: #f0f4f8; /* light gray */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* slightly lighter dark gray */
+            border-radius: 4px;
+        }
+        html.light ::-webkit-scrollbar-thumb {
+            background: #cbd5e0; /* slightly darker light gray */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* even lighter on hover */
+        }
+        html.light ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; /* even darker on hover */
+        }
+    </style>
+    <!-- html2pdf.js for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsIDXPiRixJ6VsF0wUqS6fB4h720O/9Jk7f/x2+0/S/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="font-inter antialiased transition-colors duration-300">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>

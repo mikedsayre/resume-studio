@@ -10,6 +10,30 @@ interface Html2PdfOptions {
 }
 
 /**
+ * Waits for the html2pdf library to be available on the window object.
+ * @param timeout The maximum time to wait in milliseconds.
+ * @param interval The interval between checks in milliseconds.
+ * @returns A promise that resolves with the html2pdf object or rejects if timeout is reached.
+ */
+const waitForHtml2Pdf = (timeout = 5000, interval = 100): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    let elapsed = 0;
+    const checkInterval = setInterval(() => {
+      if (typeof window !== 'undefined' && (window as any).html2pdf) {
+        clearInterval(checkInterval);
+        resolve((window as any).html2pdf);
+      } else {
+        elapsed += interval;
+        if (elapsed >= timeout) {
+          clearInterval(checkInterval);
+          reject(new Error('html2pdf.js did not load within the specified timeout.'));
+        }
+      }
+    }, interval);
+  });
+};
+
+/**
  * Exports an HTML element to a PDF file.
  * Requires html2pdf.js library to be loaded in the global scope.
  *
@@ -17,8 +41,10 @@ interface Html2PdfOptions {
  * @param filename The name of the output PDF file.
  * @param options Optional configuration for html2pdf.
  */
-export const exportToPdf = (element: HTMLElement, filename: string = 'resume.pdf', options?: Html2PdfOptions) => {
-  if (typeof window !== 'undefined' && (window as any).html2pdf) {
+export const exportToPdf = async (element: HTMLElement, filename: string = 'resume.pdf', options?: Html2PdfOptions) => {
+  try {
+    const html2pdf = await waitForHtml2Pdf(); // Wait for the html2pdf library to load
+
     const defaultOptions: Html2PdfOptions = {
       margin: 10,
       filename: filename,
@@ -28,9 +54,9 @@ export const exportToPdf = (element: HTMLElement, filename: string = 'resume.pdf
       ...options,
     };
 
-    (window as any).html2pdf().from(element).set(defaultOptions).save();
-  } else {
-    console.error('html2pdf.js is not loaded. Please ensure the script is included in index.html.');
-    alert('PDF export library not found. Please check console for details.');
+    html2pdf().from(element).set(defaultOptions).save();
+  } catch (error: any) {
+    console.error('PDF export failed:', error.message);
+    alert(`PDF export failed: ${error.message}. Please check console for details.`);
   }
 };

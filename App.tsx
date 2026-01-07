@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
-  const customCssStyleTagRef = useRef<HTMLStyleElement | null>(null);
+  // Removed customCssStyleTagRef as custom CSS will now be injected directly into ResumePreview.
 
   // Effect to apply theme class to the documentElement (html tag)
   useEffect(() => {
@@ -39,16 +39,8 @@ const App: React.FC = () => {
     document.body.classList.toggle('light', currentTheme === Theme.Light);
   }, [currentTheme]);
 
-  // Effect to inject custom CSS into the document head
-  useEffect(() => {
-    if (!customCssStyleTagRef.current) {
-      customCssStyleTagRef.current = document.createElement('style');
-      customCssStyleTagRef.current.type = 'text/css';
-      customCssStyleTagRef.current.id = 'custom-resume-styles';
-      document.head.appendChild(customCssStyleTagRef.current);
-    }
-    customCssStyleTagRef.current.innerHTML = customCssContent;
-  }, [customCssContent]);
+  // Removed useEffect for injecting custom CSS into document head.
+  // Custom CSS will now be handled directly within ResumePreview.
 
   const handleThemeToggle = useCallback((theme: Theme) => {
     setCurrentTheme(theme);
@@ -86,6 +78,10 @@ const App: React.FC = () => {
 
   const handleCopyHtml = useCallback(() => {
     if (previewRef.current) {
+      // Note: When copying HTML for Google Docs, ensure the custom CSS is also included if desired,
+      // as Google Docs might not process inline <style> tags within pasted HTML consistently.
+      // For a true copy of what's rendered, the custom CSS would need to be re-applied in the destination.
+      // The current implementation of ResumePreview injects custom CSS directly into its rendered output.
       copyToClipboard(
         previewRef.current.innerHTML,
         'Rendered HTML copied to clipboard! Note: Pasting into Google Docs may not perfectly retain all styles.'
@@ -186,7 +182,12 @@ const App: React.FC = () => {
             Resume Preview
             <InfoIcon id="preview-info" tooltipText="See how your resume will look with the selected style. This is what will be exported." />
           </h2>
-          <ResumePreview ref={previewRef} markdown={markdownContent} stylePreset={STYLE_PRESETS[selectedStylePreset]} />
+          <ResumePreview
+            ref={previewRef}
+            markdown={markdownContent}
+            stylePreset={STYLE_PRESETS[selectedStylePreset]}
+            customCss={customCssContent} // Pass custom CSS here
+          />
         </section>
       </div>
 

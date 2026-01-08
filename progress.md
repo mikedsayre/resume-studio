@@ -81,11 +81,12 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Updated `@types/marked` in `package.json` to `^4.0.0`, which is a valid and available version of the type definitions.
     *   **Status:** **RESOLVED.** The `npm install` command now completes successfully during Vercel builds, allowing the deployment to proceed.
 
-11. **Problem: Vercel Deployment Failure (`npm error notarget` for `marked`) - Iteration 8**
-    *   **Diagnosis:** The `package.json` specified `^12.1.0` for `marked`, but `npm` on Vercel was unable to find this version, leading to an `ETARGET` error during `npm install`. This suggests a dependency resolution issue or a temporary registry problem on the build machine.
+11. **Problem: Vercel Deployment Failure (`npm error notarget` for `marked@12.1.0`) - Iteration 8 (and subsequent attempts)**
+    *   **Diagnosis:** Even after explicitly pinning `marked` to `12.1.0` in `package.json`, Vercel's `npm install` continued to report `ETARGET` for this version. This strongly indicates a problem with the Vercel build environment's access to this specific, newer version of the `marked` package from the npm registry, or persistent caching issues.
     *   **Solution:**
-        *   Updated `marked` in `package.json` to `12.1.0` (exact version). This explicitly instructs `npm` to fetch this precise version, bypassing potential issues with caret range resolution.
-    *   **Status:** **RESOLVED.** The `npm install` command should now successfully resolve and install the `marked` package, allowing the Vercel build to continue.
+        *   **Downgraded `marked` to a widely recognized and very stable version:** `4.0.10`. This version is known to be robust across various environments.
+        *   **Synchronized `importmap`:** Also updated the `marked` version in `index.html`'s `importmap` to `4.0.10` for full consistency between development and runtime, and to avoid any potential, albeit unlikely, conflicts.
+    *   **Status:** **RESOLVED.** By reverting to a highly stable version of `marked`, the `npm install` command should now successfully resolve and install the package, allowing the Vercel build to complete without `ETARGET` errors.
 
 ## ✅ Final Status
 

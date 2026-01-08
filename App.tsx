@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import ThemeToggle from './components/ThemeToggle.js'; // Added .js extension
-import MarkdownEditor from './components/MarkdownEditor.js'; // Added .js extension
-import ResumePreview from './components/ResumePreview.js'; // Added .js extension
-import StyleControls from './components/StyleControls.js'; // Added .js extension
-import ExportButtons from './components/ExportButtons.js'; // Added .js extension
-import CssEditorToggle from './components/CssEditorToggle.js'; // Added .js extension
-import CssViewer from './components/CssViewer.js'; // Added .js extension
-import HelpModal from './components/HelpModal.js'; // Added .js extension
-import InfoIcon from './components/InfoIcon.js'; // Added .js extension
-import { Theme, StylePresetName } from './types.js'; // Added .js extension
-import { DEFAULT_MARKDOWN_CONTENT, STYLE_PRESETS } from './constants.js'; // Added .js extension
-import { exportToPdf } from './services/pdfService.js'; // Added .js extension
-import { prefixCss } from './utils/cssUtils.js'; // Added .js extension and moved prefixCss here
+import ThemeToggle from './components/ThemeToggle.js';
+import MarkdownEditor from './components/MarkdownEditor.js';
+import ResumePreview from './components/ResumePreview.js';
+import StyleControls from './components/StyleControls.js';
+import ExportButtons from './components/ExportButtons.js';
+import CssEditorToggle from './components/CssEditorToggle.js'; // Reverted to CssEditorToggle
+import CssViewer from './components/CssViewer.js';
+import HelpModal from './components/HelpModal.js';
+import InfoIcon from './components/InfoIcon.js';
+import { Theme, StylePresetName } from './types.js';
+import { DEFAULT_MARKDOWN_CONTENT, STYLE_PRESETS } from './constants.js';
+import { exportToPdf } from './services/pdfService.js';
+import { prefixCss } from './utils/cssUtils.js';
 
 const App: React.FC = () => {
   const [markdownContent, setMarkdownContent] = useState<string>(DEFAULT_MARKDOWN_CONTENT);
@@ -24,7 +24,6 @@ const App: React.FC = () => {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Effect to apply theme class to the documentElement (html tag)
   useEffect(() => {
     const htmlElement = document.documentElement;
     if (currentTheme === Theme.Dark) {
@@ -34,7 +33,6 @@ const App: React.FC = () => {
       htmlElement.classList.add('light');
       htmlElement.classList.remove('dark');
     }
-    // Also explicitly set body classes for consistent base styling
     document.body.classList.toggle('dark', currentTheme === Theme.Dark);
     document.body.classList.toggle('light', currentTheme === Theme.Light);
   }, [currentTheme]);
@@ -75,7 +73,6 @@ const App: React.FC = () => {
 
   const handleCopyHtml = useCallback(() => {
     if (previewRef.current) {
-      // When copying HTML, we should include the globally applied custom CSS
       const currentCustomCss = prefixCss(customCssContent, '.resume-preview-root');
       const styledHtml = `<style>${currentCustomCss}</style>${previewRef.current.innerHTML}`;
       copyToClipboard(
@@ -89,7 +86,6 @@ const App: React.FC = () => {
 
   const currentYear = new Date().getFullYear();
 
-  // Prefix custom CSS for global injection
   const prefixedCustomCss = prefixCss(customCssContent, '.resume-preview-root');
 
   return (
@@ -98,11 +94,9 @@ const App: React.FC = () => {
                       ? 'bg-gradient-to-br from-gray-900 to-black text-gray-100'
                       : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800'}`
                     }>
-      {/* Global Custom CSS Style Tag */}
       {prefixedCustomCss && <style>{prefixedCustomCss}</style>}
 
       <header className="w-full max-w-7xl bg-gray-800 dark:bg-white rounded-xl shadow-xl transition-colors duration-300 mb-4 flex flex-col p-4 sm:p-3">
-        {/* Top Header Row: Title, Help, Theme Toggle, Show CSS, CSS Editor Toggle */}
         <div className="flex justify-between items-center w-full pb-3 sm:pb-2 border-b border-gray-700 dark:border-gray-300 mb-3 sm:mb-2">
           <div className="flex items-end">
             <h1 className="font-rajdhani text-2xl sm:text-3xl font-extrabold text-indigo-400 dark:text-indigo-700 tracking-wide">
@@ -118,9 +112,7 @@ const App: React.FC = () => {
               by swan lake digital
             </a>
           </div>
-          {/* Adjusted for flex-wrap to prevent icons going off-screen on smaller sizes */}
           <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
-             {/* Help Button */}
             <button
               onClick={() => setShowHelpModal(true)}
               className="p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
@@ -133,7 +125,6 @@ const App: React.FC = () => {
               </svg>
             </button>
             <ThemeToggle currentTheme={currentTheme} onToggle={handleThemeToggle} />
-            {/* Show CSS Used Button */}
             <button
               onClick={() => setShowCssViewer(true)}
               className="p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
@@ -145,6 +136,22 @@ const App: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 8.25H9.75a2.25 2.25 0 00-2.25 2.25v.75A2.25 2.25 0 019.75 13.5h.75m-3 0l3-3m-3 3l3 3m6.75-9V8.25a2.25 2.25 0 00-2.25-2.25H16.5m-3 0l3-3m-3 3l3 3m-.75-9h4.5a2.25 2.25 0 012.25 2.25v4.5a2.25 2.25 0 01-2.25 2.25h-2.25" />
               </svg>
             </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center gap-x-3 gap-y-2 w-full">
+          <StyleControls
+            selectedPreset={selectedStylePreset}
+            onSelectPreset={handleStylePresetChange}
+            // setShowCssEditor is no longer passed here
+          />
+          <div className="flex items-center gap-2"> {/* Group ExportButtons and CssEditorToggle */}
+            <ExportButtons
+              onExportPdf={handleExportPdf}
+              onCopyMarkdown={handleCopyMarkdown}
+              onCopyHtml={handleCopyHtml}
+            />
+            {/* CssEditorToggle is here */}
             <CssEditorToggle
               customCssContent={customCssContent}
               setCustomCssContent={setCustomCssContent}
@@ -153,34 +160,18 @@ const App: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Bottom Header Row (Toolbar): Style Controls, Export Buttons */}
-        {/* Changed ExportButtons to `w-full sm:w-auto` to allow ml-auto on InfoIcon to work */}
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center gap-x-3 gap-y-2 w-full">
-          <StyleControls
-            selectedPreset={selectedStylePreset}
-            onSelectPreset={handleStylePresetChange}
-          />
-          <ExportButtons
-            onExportPdf={handleExportPdf}
-            onCopyMarkdown={handleCopyMarkdown}
-            onCopyHtml={handleCopyHtml}
-          />
-        </div>
       </header>
 
       <div className="flex flex-col lg:flex-row w-full max-w-7xl flex-grow bg-gray-900 dark:bg-gray-50
                       rounded-xl shadow-xl overflow-hidden transition-colors duration-300">
-        {/* Markdown Editor Panel */}
         <section className="flex-1 p-4 sm:p-6 border-r border-gray-700 dark:border-gray-300 lg:min-h-0 min-h-[45vh] flex flex-col">
           <h2 className="font-rajdhani text-xl sm:text-2xl font-bold text-gray-200 dark:text-gray-800 mb-3 flex items-center">
-            Markdown/HTML Editor
+            Markdown Editor
             <InfoIcon id="editor-info" tooltipText="Write your resume using Markdown syntax, including raw HTML. Changes are reflected instantly in the preview." />
           </h2>
           <MarkdownEditor value={markdownContent} onChange={handleMarkdownChange} />
         </section>
 
-        {/* Resume Preview Panel */}
         <section className="flex-1 p-4 sm:p-6 lg:min-h-0 min-h-[45vh] flex flex-col">
           <h2 className="font-rajdhani text-xl sm:text-2xl font-bold text-gray-200 dark:text-gray-800 mb-3 flex items-center">
             Resume Preview
@@ -190,7 +181,6 @@ const App: React.FC = () => {
             ref={previewRef}
             markdown={markdownContent}
             stylePreset={STYLE_PRESETS[selectedStylePreset]}
-            // customCss prop is no longer passed to ResumePreview
           />
         </section>
       </div>
@@ -199,9 +189,9 @@ const App: React.FC = () => {
         Made by Google AI Studio and <a href="https://swanlakedigital.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 dark:text-indigo-600 hover:underline">swanlakedigital.com</a> &copy; {currentYear}
       </footer>
 
-      {/* Modals */}
       <CssViewer show={showCssViewer} onClose={() => setShowCssViewer(false)} stylePreset={STYLE_PRESETS[selectedStylePreset]} />
       <HelpModal show={showHelpModal} onClose={() => setShowHelpModal(false)} />
+      {/* CssEditorToggle handles its own modal internally, so CssEditorModal is not needed here */}
     </div>
   );
 };

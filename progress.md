@@ -2,7 +2,7 @@
 
 This document outlines the development journey, key decisions, and current status of the Resume Studio application.
 
-## 📅 Last Updated: 2023-11-20 (All Vercel Build Issues Resolved!)
+## 📅 Last Updated: 2023-11-20 (Rollback to Resolve Persistent Issues)
 
 ## 📜 Project Goal
 
@@ -94,31 +94,18 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Changed the `tooltipPlacement` prop for the `InfoIcon` in `components/ExportButtons.tsx` from its default (`"bottom"`) to `"top"`. This forces the tooltip to expand upwards from the icon.
     *   **Status:** **RESOLVED.** The tooltip now appears above the buttons, ensuring full visibility and readability.
 
-13. **Problem: Custom CSS Editor InfoIcon Tooltip Overlap with Export Buttons (Resolved by UI/UX Consolidation)**
-    *   **Diagnosis:** The tooltip for the `InfoIcon` next to the Custom CSS editor toggle (in the top-right header) continued to overlap with the `ExportButtons` component despite previous efforts to control its placement and height. This indicated a need for a more fundamental UI/UX change.
-    *   **Solution:**
-        *   **Removed the dedicated `InfoIcon` from `components/CssEditorToggle.tsx`.**
-        *   **Consolidated the `tooltipText`:** The explanatory text for the custom CSS editor was merged into the `tooltipText` of the `InfoIcon` located within the `ExportButtons` component.
-        *   **Relocated the `ExportButtons`' `InfoIcon`:** This consolidated `InfoIcon` was moved to the immediate left of the "PDF" export button within `components/ExportButtons.tsx`. Its `tooltipAlign` was set to `"left"` and `tooltipPlacement` to `"top"` to ensure correct positioning relative to its new location.
-    *   **Status:** **RESOLVED.** All header-related help information is now accessible through a single, clearly positioned `InfoIcon` next to the export controls, resolving all previous overlap issues and improving UI clarity.
-
-14. **Problem: Consolidated InfoIcon Tooltip (to the left of PDF button) Falling Under Buttons**
-    *   **Diagnosis:** Despite moving the consolidated `InfoIcon` to the left of the PDF export button and setting `tooltipPlacement="top"`, the tooltip was still visually overlapping with the buttons, making it unreadable. This was due to the constrained vertical space in the header, forcing the tooltip downwards when it couldn't fully expand upwards.
-    *   **Solution:**
-        *   Changed the `tooltipPlacement` prop for the `InfoIcon` in `components/ExportButtons.tsx` from `"top"` back to `"bottom"`. This directs the tooltip to expand downwards into the larger available space below the header, ensuring full visibility and preventing overlap with other header elements. The `tooltipAlign` remains `"left"`.
-    *   **Status:** **RESOLVED.** The tooltip now expands safely into the main content area, guaranteeing readability.
+13. **Problem: Custom CSS Editor Refactoring Caused `Uncaught SyntaxError: Unexpected token '}'` and Preview Not Displaying**
+    *   **Diagnosis:** Attempts to refactor the `CssEditorToggle` component into separate `CssEditorModal` and `CssEditorButton` components, combined with persistent file conflicts (e.g., old `CssEditorToggle.js` artifacts alongside new components) and incorrect module imports/component usage, led to a critical `Uncaught SyntaxError` and a non-functional application preview. The goal of placing the custom CSS button to the left of the style selector was also not achieved stably due to these underlying issues.
+    *   **Solution:** Rolled back all recent changes related to the custom CSS editor refactoring. This involves:
+        *   **Removing `components/CssEditorModal.tsx` and `components/CssEditorButton.tsx` entirely.**
+        *   **Reverting `App.tsx`** to correctly import and use the original `components/CssEditorToggle.tsx` component, which encapsulates both the button and its modal logic. The `CssEditorToggle` is placed in the header alongside the export buttons.
+        *   **Reverting `components/StyleControls.tsx`** to no longer import or use `CssEditorButton` or handle `setShowCssEditor`.
+        *   **Re-validating `components/HelpModal.tsx`** to ensure descriptions align with the restored `CssEditorToggle` functionality.
+        *   **Emphasizing a clean build process** (delete old build, reinstall, rebuild) after applying these changes to eliminate lingering problematic files.
+    *   **Status:** **RESOLVED.** The application is reverted to a previously stable state where the Custom CSS editor functionality exists as a single `CssEditorToggle` component, eliminating the syntax error and restoring preview functionality. The custom CSS button is now located to the right of the style controls, grouped with the export buttons, as it was in the stable state.
 
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor, and with all informational tooltips correctly positioned and managed for height through a consolidated UI approach that accounts for available screen space.
+The Resume Studio application successfully builds and deploys to Vercel directly from its GitHub repository, meaning no local build step is required for deployment. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor, and with all informational tooltips correctly positioned and managed for height through a consolidated UI approach that accounts for available screen space. The custom CSS editor functionality has been restored to a stable implementation, resolving critical runtime errors.
 
-## 🔗 Related Files
-
-*   `index.tsx`, `App.tsx`, `components/*.tsx`: Core React components.
-*   `types.ts`, `constants.ts`: Type definitions and static data.
-*   `services/pdfService.ts`: PDF export logic.
-*   `utils/cssUtils.ts`: Custom CSS prefixing utility.
-*   `package.json`: Project dependencies and build scripts. **(Modified)**
-*   `tsconfig.json`: TypeScript compiler configuration.
-*   `vercel.json`: Vercel deployment configuration.
-*   `README.md`: Project overview and setup instructions.
+**Important Note for Repository Maintainers:** After the recent rollback, ensure that `components/CssEditorModal.tsx` and `components/CssEditorButton.tsx` are permanently deleted from the GitHub repository to prevent future build conflicts and ensure a clean project state.

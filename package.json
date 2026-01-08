@@ -9,6 +9,7 @@
     "start": "serve build"
   },
   "devDependencies": {
+    "@types/html2pdf.js": "^0.10.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "cpx": "^1.5.0",

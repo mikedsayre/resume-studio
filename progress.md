@@ -2,7 +2,7 @@
 
 This document outlines the development journey, key decisions, and current status of the Resume Studio application.
 
-## 📅 Last Updated: 2023-11-20 (Addressing Missing React Types)
+## 📅 Last Updated: 2023-11-20 (Addressing html2pdf.js Types & vite.config.ts Exclusion)
 
 ## 📜 Project Goal
 
@@ -52,17 +52,26 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Removed the `allowImportingTsExtensions: true` compiler option from `tsconfig.json`. This allowed `tsc` to compile without the reported error, as it's not needed for our direct ES Module output strategy.
     *   **Result:** **FAILED.** Vercel logs showed a new set of errors, primarily `TS2307: Cannot find module 'react'` and `TS7026: JSX element implicitly has type 'any'`, indicating that the TypeScript compiler cannot locate the necessary type declarations for React.
 
-7.  **Problem: Missing React Type Declarations (TS2307, TS7026, TS2875) - Iteration 5 (Current Attempt)**
+7.  **Problem: Missing React Type Declarations (TS2307, TS7026, TS2875) - Iteration 5**
     *   **Diagnosis:** The project relies on `importmap` for runtime React loading, but the TypeScript compiler (tsc) during the build process requires explicit type declarations (from `@types/react` and `@types/react-dom`) to be present in `node_modules` for successful type-checking and compilation of `.tsx` files. These type packages were missing from `devDependencies`.
-    *   **Solution (Current attempt):**
+    *   **Solution (Attempt 5):**
         *   Added `@types/react` and `@types/react-dom` as `devDependencies` to `package.json`. This ensures these type definitions are installed during `npm install` and available for `tsc` to use.
-    *   **Current Status:** **PENDING VERIFICATION.** This change addresses the fundamental type-checking issue for React components.
+    *   **Result:** **FAILED.** Vercel logs showed new errors: `TS2307: Cannot find module 'html2pdf.js'` and multiple `TS2307` and other errors related to `vite.config.ts`, `path`, `vite`, and `@vitejs/plugin-react`.
+
+8.  **Problem: Missing `html2pdf.js` Types (TS2307) & Unexpected `vite.config.ts` Compilation Errors - Iteration 6 (Current Attempt)**
+    *   **Diagnosis:**
+        *   `html2pdf.js` types are still missing for `tsc`, similar to the previous React type issue.
+        *   Errors related to `vite.config.ts`, `path`, `vite`, and `@vitejs/plugin-react` indicate that `tsc` is attempting to compile a `vite.config.ts` file that exists in the repository. However, the project's current build system (using `tsc` directly, not Vite) doesn't require or correctly handle this file. The necessary `@types` for Vite/Node are also not installed.
+    *   **Solution (Current attempt):**
+        *   Add `@types/html2pdf.js` to `devDependencies` in `package.json`.
+        *   Explicitly add `"vite.config.ts"` to the `exclude` array in `tsconfig.json`. This will prevent `tsc` from trying to compile it, thus resolving all the `vite.config.ts`-related errors without needing to add Vite dependencies to a non-Vite project.
+    *   **Current Status:** **PENDING VERIFICATION.** This set of changes addresses all outstanding compilation errors observed in the latest Vercel logs.
 
 ## ➡️ Next Steps
 
-*   **Deploy current changes:** Push the updated `package.json` to GitHub and allow Vercel to attempt a new deployment.
-*   **Analyze Vercel logs:** Carefully review the new Vercel build logs. We expect the `TS2307` and JSX-related errors to be resolved. The verbose `echo` statements should continue to track the build's progress.
-*   **Troubleshoot (if necessary):** If deployment still fails, the logs will once again be the primary tool for diagnosis.
+*   **Deploy current changes:** Push the updated `package.json` and `tsconfig.json` to GitHub and allow Vercel to attempt a new deployment.
+*   **Analyze Vercel logs:** Carefully review the new Vercel build logs. We expect all `TS2307` and other compilation errors to be resolved. The verbose `echo` statements should confirm the build stages are completing.
+*   **Troubleshoot (if necessary):** If deployment still fails, the logs will provide the next set of clues.
 
 ## 🔗 Related Files
 
@@ -71,6 +80,6 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
 *   `services/pdfService.ts`: PDF export logic.
 *   `utils/cssUtils.ts`: Custom CSS prefixing utility.
 *   `package.json`: Project dependencies and build scripts. **(Modified)**
-*   `tsconfig.json`: TypeScript compiler configuration.
+*   `tsconfig.json`: TypeScript compiler configuration. **(Modified)**
 *   `vercel.json`: Vercel deployment configuration.
 *   `README.md`: Project overview and setup instructions.

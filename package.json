@@ -5,7 +5,7 @@
     "clean": "rm -rf build",
     "compile": "tsc",
     "copy-static": "cpx \"./*.{html,json}\" build",
-    "build": "npm run clean && npm run compile && npm run copy-static && ls -R build",
+    "build": "echo '--- Starting build process for Resume Studio ---' && npm run clean && echo '--- Compiling TypeScript (tsc) ---' && NODE_OPTIONS=--max-old-space-size=4096 npm run compile && echo '--- Copying static assets (cpx) ---' && npm run copy-static && echo '--- Build completed. Contents of build folder: ---' && ls -R build",
     "start": "serve build"
   },
   "devDependencies": {

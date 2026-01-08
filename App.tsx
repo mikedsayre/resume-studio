@@ -118,7 +118,8 @@ const App: React.FC = () => {
               by swan lake digital
             </a>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          {/* Adjusted for flex-wrap to prevent icons going off-screen on smaller sizes */}
+          <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
              {/* Help Button */}
             <button
               onClick={() => setShowHelpModal(true)}
@@ -154,7 +155,8 @@ const App: React.FC = () => {
         </div>
 
         {/* Bottom Header Row (Toolbar): Style Controls, Export Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3 sm:gap-6 w-full">
+        {/* Changed ExportButtons to `w-full sm:w-auto` to allow ml-auto on InfoIcon to work */}
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center gap-x-3 gap-y-2 w-full">
           <StyleControls
             selectedPreset={selectedStylePreset}
             onSelectPreset={handleStylePresetChange}

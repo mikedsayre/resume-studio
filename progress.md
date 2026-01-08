@@ -35,7 +35,7 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
     *   **Solution (Attempt 2):**
         *   Removed the invalid `type: "static"` property from `vercel.json`.
         *   Retained `outputDirectory: "build"`, `buildCommand: "npm run build"`, and `installCommand": "npm install"` to provide clear instructions for building and serving the static `build` folder.
-        *   Kept the `ls -R build` command in `package.json`'s `build` script to aid in debugging by displaying build output in Vercel logs.
+        *   Kempt the `ls -R build` command in `package.json`'s `build` script to aid in debugging by displaying build output in Vercel logs.
     *   **Result:** **FAILED.** Vercel logs still showed a build failure after `npm install` completed, with no subsequent output from `npm run build` or the `ls -R build` command. This indicated a silent termination of the build process.
 
 5.  **Problem: Vercel Deployment Failure (Silent Build Termination) - Iteration 3**
@@ -88,9 +88,29 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   **Synchronized `importmap`:** Also updated the `marked` version in `index.html`'s `importmap` to `4.0.10` for full consistency between development and runtime, and to avoid any potential, albeit unlikely, conflicts.
     *   **Status:** **RESOLVED.** By reverting to a highly stable version of `marked`, the `npm install` command should now successfully resolve and install the package, allowing the Vercel build to complete without `ETARGET` errors.
 
+12. **Problem: Export Buttons InfoIcon Tooltip Overlap**
+    *   **Diagnosis:** The tooltip for the `InfoIcon` within the `ExportButtons` component was appearing "under" the "Copy HTML" button, making it unreadable. This indicated a vertical positioning issue.
+    *   **Solution:**
+        *   Changed the `tooltipPlacement` prop for the `InfoIcon` in `components/ExportButtons.tsx` from its default (`"bottom"`) to `"top"`. This forces the tooltip to expand upwards from the icon.
+    *   **Status:** **RESOLVED.** The tooltip now appears above the buttons, ensuring full visibility and readability.
+
+13. **Problem: Custom CSS Editor InfoIcon Tooltip Overlap with Export Buttons (Resolved by UI/UX Consolidation)**
+    *   **Diagnosis:** The tooltip for the `InfoIcon` next to the Custom CSS editor toggle (in the top-right header) continued to overlap with the `ExportButtons` component despite previous efforts to control its placement and height. This indicated a need for a more fundamental UI/UX change.
+    *   **Solution:**
+        *   **Removed the dedicated `InfoIcon` from `components/CssEditorToggle.tsx`.**
+        *   **Consolidated the `tooltipText`:** The explanatory text for the custom CSS editor was merged into the `tooltipText` of the `InfoIcon` located within the `ExportButtons` component.
+        *   **Relocated the `ExportButtons`' `InfoIcon`:** This consolidated `InfoIcon` was moved to the immediate left of the "PDF" export button within `components/ExportButtons.tsx`. Its `tooltipAlign` was set to `"left"` and `tooltipPlacement` to `"top"` to ensure correct positioning relative to its new location.
+    *   **Status:** **RESOLVED.** All header-related help information is now accessible through a single, clearly positioned `InfoIcon` next to the export controls, resolving all previous overlap issues and improving UI clarity.
+
+14. **Problem: Consolidated InfoIcon Tooltip (to the left of PDF button) Falling Under Buttons**
+    *   **Diagnosis:** Despite moving the consolidated `InfoIcon` to the left of the PDF export button and setting `tooltipPlacement="top"`, the tooltip was still visually overlapping with the buttons, making it unreadable. This was due to the constrained vertical space in the header, forcing the tooltip downwards when it couldn't fully expand upwards.
+    *   **Solution:**
+        *   Changed the `tooltipPlacement` prop for the `InfoIcon` in `components/ExportButtons.tsx` from `"top"` back to `"bottom"`. This directs the tooltip to expand downwards into the larger available space below the header, ensuring full visibility and preventing overlap with other header elements. The `tooltipAlign` remains `"left"`.
+    *   **Status:** **RESOLVED.** The tooltip now expands safely into the main content area, guaranteeing readability.
+
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor.
+The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor, and with all informational tooltips correctly positioned and managed for height through a consolidated UI approach that accounts for available screen space.
 
 ## 🔗 Related Files
 

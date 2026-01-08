@@ -34,7 +34,7 @@ const StyleControls: React.FC<StyleControlsProps> = ({ selectedPreset, onSelectP
       <InfoIcon
         id="style-preset-info"
         tooltipText="Select a predefined styling preset to change the look and feel of your resume."
-        className="hidden sm:inline-flex"
+        // Removed className="hidden sm:inline-flex" to always show the icon
       />
     </div>
   );

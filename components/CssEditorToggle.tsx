@@ -39,11 +39,7 @@ const CssEditorToggle: React.FC<CssEditorToggleProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
           </svg>
         </button>
-        <InfoIcon
-          id="css-editor-info"
-          tooltipText="Enter custom CSS here to override or add styles to your resume preview. These styles will be included in the PDF export. For full control, especially over font styles, you may need to use `!important`."
-          className="hidden sm:inline-flex"
-        />
+        {/* The InfoIcon for CSS editor was removed from here. Its content is now in ExportButtons' InfoIcon. */}
       </div>
 
       {showCssEditor && (

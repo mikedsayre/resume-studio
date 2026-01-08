@@ -1,4 +1,4 @@
-import { StylePreset, StylePresetName } from './types';
+import { StylePreset, StylePresetName } from './types.js'; // Added .js extension
 
 export const DEFAULT_MARKDOWN_CONTENT = `# John Doe
 ---

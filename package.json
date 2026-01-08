@@ -2,7 +2,15 @@
   "name": "markdown-resume-editor",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo \"No build step required for static ES module application.\"",
-    "start": "echo \"Serving static files... (Use a local static server like 'serve' if needed)\""
+    "clean": "rm -rf build",
+    "compile": "tsc",
+    "copy-static": "cpx \"./*.{html,json}\" build",
+    "build": "npm run clean && npm run compile && npm run copy-static",
+    "start": "serve build"
+  },
+  "devDependencies": {
+    "cpx": "^1.5.0",
+    "serve": "^14.2.1",
+    "typescript": "^5.3.3"
   }
 }

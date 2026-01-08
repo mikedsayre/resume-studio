@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { StylePreset, StyleClasses } from '../types'; // Import StyleClasses
-import { STYLE_PRESETS } from '../constants';
+import { StylePreset, StyleClasses } from '../types.js'; // Added .js extension
+import { STYLE_PRESETS } from '../constants.js'; // Added .js extension
 
 interface CssViewerProps {
   show: boolean;

@@ -4,9 +4,11 @@ import html2pdf from 'html2pdf.js';
 interface Html2PdfOptions {
   margin?: number | [number, number, number, number]; // Top, Left, Bottom, Right
   filename?: string;
-  image?: { type: string; quality: number };
+  // Fix: Specify literal types for 'image.type' as expected by html2pdf.js
+  image?: { type: 'jpeg' | 'png' | 'webp'; quality: number };
   html2canvas?: { scale: number; logging: boolean; useCORS: boolean };
-  jsPDF?: { unit: string; format: string; orientation: string };
+  // Fix: Specify literal types for 'jsPDF.orientation'
+  jsPDF?: { unit: string; format: string; orientation: 'portrait' | 'landscape' };
 }
 
 /**

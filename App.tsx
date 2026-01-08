@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import ThemeToggle from './components/ThemeToggle';
-import MarkdownEditor from './components/MarkdownEditor';
-import ResumePreview from './components/ResumePreview';
-import StyleControls from './components/StyleControls';
-import ExportButtons from './components/ExportButtons';
-import CssEditorToggle from './components/CssEditorToggle';
-import CssViewer from './components/CssViewer';
-import HelpModal from './components/HelpModal';
-import InfoIcon from './components/InfoIcon';
-import { Theme, StylePresetName } from './types';
-import { DEFAULT_MARKDOWN_CONTENT, STYLE_PRESETS } from './constants';
-import { exportToPdf } from './services/pdfService';
+import ThemeToggle from './components/ThemeToggle.js'; // Added .js extension
+import MarkdownEditor from './components/MarkdownEditor.js'; // Added .js extension
+import ResumePreview from './components/ResumePreview.js'; // Added .js extension
+import StyleControls from './components/StyleControls.js'; // Added .js extension
+import ExportButtons from './components/ExportButtons.js'; // Added .js extension
+import CssEditorToggle from './components/CssEditorToggle.js'; // Added .js extension
+import CssViewer from './components/CssViewer.js'; // Added .js extension
+import HelpModal from './components/HelpModal.js'; // Added .js extension
+import InfoIcon from './components/InfoIcon.js'; // Added .js extension
+import { Theme, StylePresetName } from './types.js'; // Added .js extension
+import { DEFAULT_MARKDOWN_CONTENT, STYLE_PRESETS } from './constants.js'; // Added .js extension
+import { exportToPdf } from './services/pdfService.js'; // Added .js extension
+import { prefixCss } from './utils/cssUtils.js'; // Added .js extension and moved prefixCss here
 
 const App: React.FC = () => {
   const [markdownContent, setMarkdownContent] = useState<string>(DEFAULT_MARKDOWN_CONTENT);
@@ -22,7 +23,6 @@ const App: React.FC = () => {
   const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
-  // Removed customCssStyleTagRef as custom CSS will now be injected directly into ResumePreview.
 
   // Effect to apply theme class to the documentElement (html tag)
   useEffect(() => {
@@ -38,9 +38,6 @@ const App: React.FC = () => {
     document.body.classList.toggle('dark', currentTheme === Theme.Dark);
     document.body.classList.toggle('light', currentTheme === Theme.Light);
   }, [currentTheme]);
-
-  // Removed useEffect for injecting custom CSS into document head.
-  // Custom CSS will now be handled directly within ResumePreview.
 
   const handleThemeToggle = useCallback((theme: Theme) => {
     setCurrentTheme(theme);
@@ -78,20 +75,22 @@ const App: React.FC = () => {
 
   const handleCopyHtml = useCallback(() => {
     if (previewRef.current) {
-      // Note: When copying HTML for Google Docs, ensure the custom CSS is also included if desired,
-      // as Google Docs might not process inline <style> tags within pasted HTML consistently.
-      // For a true copy of what's rendered, the custom CSS would need to be re-applied in the destination.
-      // The current implementation of ResumePreview injects custom CSS directly into its rendered output.
+      // When copying HTML, we should include the globally applied custom CSS
+      const currentCustomCss = prefixCss(customCssContent, '.resume-preview-root');
+      const styledHtml = `<style>${currentCustomCss}</style>${previewRef.current.innerHTML}`;
       copyToClipboard(
-        previewRef.current.innerHTML,
+        styledHtml,
         'Rendered HTML copied to clipboard! Note: Pasting into Google Docs may not perfectly retain all styles.'
       );
     } else {
       alert('Resume preview not available to copy HTML from.');
     }
-  }, [copyToClipboard]);
+  }, [copyToClipboard, customCssContent]);
 
   const currentYear = new Date().getFullYear();
+
+  // Prefix custom CSS for global injection
+  const prefixedCustomCss = prefixCss(customCssContent, '.resume-preview-root');
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center py-4 px-2 sm:p-4 font-inter transition-colors duration-300
@@ -99,6 +98,9 @@ const App: React.FC = () => {
                       ? 'bg-gradient-to-br from-gray-900 to-black text-gray-100'
                       : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800'}`
                     }>
+      {/* Global Custom CSS Style Tag */}
+      {prefixedCustomCss && <style>{prefixedCustomCss}</style>}
+
       <header className="w-full max-w-7xl bg-gray-800 dark:bg-white rounded-xl shadow-xl transition-colors duration-300 mb-4 flex flex-col p-4 sm:p-3">
         {/* Top Header Row: Title, Help, Theme Toggle, Show CSS, CSS Editor Toggle */}
         <div className="flex justify-between items-center w-full pb-3 sm:pb-2 border-b border-gray-700 dark:border-gray-300 mb-3 sm:mb-2">
@@ -186,7 +188,7 @@ const App: React.FC = () => {
             ref={previewRef}
             markdown={markdownContent}
             stylePreset={STYLE_PRESETS[selectedStylePreset]}
-            customCss={customCssContent} // Pass custom CSS here
+            // customCss prop is no longer passed to ResumePreview
           />
         </section>
       </div>

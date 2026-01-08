@@ -1,7 +1,7 @@
 import React from 'react';
-import { StylePresetName } from '../types';
-import { STYLE_PRESETS } from '../constants';
-import InfoIcon from './InfoIcon';
+import { StylePresetName } from '../types.js'; // Added .js extension
+import { STYLE_PRESETS } from '../constants.js'; // Added .js extension
+import InfoIcon from './InfoIcon.js'; // Added .js extension
 
 interface StyleControlsProps {
   selectedPreset: StylePresetName;

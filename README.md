@@ -1,20 +1,59 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🚀 Resume Studio
 
-# Run and deploy your AI Studio app
+A professional and futuristic markdown resume editor that empowers you to craft stunning resumes with unparalleled ease and style. Developed to provide a seamless UI/UX for modern job seekers.
 
-This contains everything you need to run your app locally.
+## ✨ Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1CIADfRAO_ivfixpCHxw9wD9ajUhnY5oj
+*   **Real-time Markdown Editor:** Write your resume content in Markdown and see instant updates in a live preview.
+*   **Dynamic Style Presets:** Choose from a selection of professionally designed, futuristic themes to transform your resume's aesthetic.
+*   **Advanced Custom CSS:** Unleash your creativity with an integrated CSS editor to finely tune or completely overhaul your resume's appearance.
+*   **One-Click Export:** Generate high-quality PDF documents or copy styled HTML/raw Markdown directly to your clipboard for use in other applications (e.g., Google Docs).
+*   **Intuitive UI/UX:** Enjoy a clean, responsive, and accessible interface designed for a superior user experience.
+*   **Light & Dark Theme Toggle:** Switch between sleek dark and bright light modes to suit your preference.
 
-## Run Locally
+## 🛠️ Technologies
 
-**Prerequisites:**  Node.js
+*   **React:** For a dynamic and responsive user interface.
+*   **TypeScript:** Ensuring type safety and robust code.
+*   **Tailwind CSS:** For rapid and consistent styling.
+*   **html2pdf.js:** Powering reliable PDF exports.
+*   **ES Modules (Native Browser Support):** For efficient module loading.
 
+## 📦 Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+This application is designed for direct browser execution after transpilation.
+
+1.  **Clone the repository:**
+    ```bash
+    git clone your-repo-url
+    cd resume-studio
+    ```
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Build the Application:**
+    This command transpiles TypeScript to JavaScript and prepares static assets into the `build/` directory.
+    ```bash
+    npm run build
+    ```
+4.  **Run Locally (Optional):**
+    ```bash
+    npm start
+    ```
+    This will serve the `build/` directory, typically at `http://localhost:5000`.
+
+## 🚀 Deployment on Vercel (or similar static hosting)
+
+This project is configured for straightforward deployment to platforms like Vercel. The `package.json` scripts and `tsconfig.json` handle the necessary TypeScript transpilation, and `vercel.json` directs the deployment platform to serve the generated `build/` directory.
+
+Simply push your code to a Git repository (e.g., GitHub, GitLab, Bitbucket) and connect it to your Vercel project. Vercel will automatically detect the build configuration and deploy your application.
+
+## 💡 Contribution
+
+Feel free to fork this repository, suggest features, or contribute to making Resume Studio even better!
+
+---
+
+**Made with Google AI Studio**
+**Powered by [Swan Lake Digital](https://swanlakedigital.com)**

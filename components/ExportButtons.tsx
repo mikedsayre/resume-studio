@@ -1,5 +1,5 @@
 import React from 'react';
-import InfoIcon from './InfoIcon';
+import InfoIcon from './InfoIcon.js'; // Added .js extension
 
 interface ExportButtonsProps {
   onExportPdf: () => void;

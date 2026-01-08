@@ -1,4 +1,6 @@
 {
+  "type": "static",
   "outputDirectory": "build",
-  "framework": null
+  "buildCommand": "npm run build",
+  "installCommand": "npm install"
 }

@@ -5,7 +5,7 @@
     "clean": "rm -rf build",
     "compile": "tsc",
     "copy-static": "cpx \"./*.{html,json}\" build",
-    "build": "npm run clean && npm run compile && npm run copy-static",
+    "build": "npm run clean && npm run compile && npm run copy-static && ls -R build",
     "start": "serve build"
   },
   "devDependencies": {

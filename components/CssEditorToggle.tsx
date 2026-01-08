@@ -41,7 +41,7 @@ const CssEditorToggle: React.FC<CssEditorToggleProps> = ({
         </button>
         <InfoIcon
           id="css-editor-info"
-          tooltipText="Enter custom CSS here to override or add styles to your resume preview. These styles will be included in the PDF export."
+          tooltipText="Enter custom CSS here to override or add styles to your resume preview. These styles will be included in the PDF export. For full control, especially over font styles, you may need to use `!important`."
           className="hidden sm:inline-flex"
         />
       </div>

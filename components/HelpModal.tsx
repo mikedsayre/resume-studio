@@ -53,7 +53,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ show, onClose }) => {
                 <strong>Style Presets:</strong> Use the "Choose Style" dropdown in the header to instantly apply one of our professionally designed style presets to your resume.
               </li>
               <li>
-                <strong>Custom CSS Editor:</strong> Click the <code className="font-mono bg-gray-700 dark:bg-gray-300 px-1 rounded text-green-300 dark:text-green-800">{'< />'}</code> icon in the top right to open a CSS editor. Here, you can write custom CSS to override or add new styles to your resume, giving you ultimate control.
+                <strong>Custom CSS Editor:</strong> Click the <code className="font-mono bg-gray-700 dark:bg-gray-300 px-1 rounded text-green-300 dark:text-green-800">{'< />'}</code> icon in the top right to open a CSS editor. Here, you can write custom CSS to override or add new styles to your resume, giving you ultimate control. Your custom CSS rules will take precedence over the selected style preset. For full control, especially over properties like `font-family` or `color` which might be strongly defined by presets, you may need to add `!important` to your custom CSS declarations.
               </li>
               <li>
                 <strong>View Preset CSS:</strong> Click the <code className="font-mono bg-gray-700 dark:bg-gray-300 px-1 rounded text-green-300 dark:text-green-800">{'</>'}</code> icon to see the underlying Tailwind CSS classes used by the currently selected style preset.

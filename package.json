@@ -1,0 +1,8 @@
+{
+  "name": "markdown-resume-editor",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo \"No build step required for static ES module application.\"",
+    "start": "echo \"Serving static files... (Use a local static server like 'serve' if needed)\""
+  }
+}

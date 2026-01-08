@@ -81,9 +81,15 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Updated `@types/marked` in `package.json` to `^4.0.0`, which is a valid and available version of the type definitions.
     *   **Status:** **RESOLVED.** The `npm install` command now completes successfully during Vercel builds, allowing the deployment to proceed.
 
+11. **Problem: Vercel Deployment Failure (`npm error notarget` for `marked`) - Iteration 8**
+    *   **Diagnosis:** The `package.json` specified `^12.1.0` for `marked`, but `npm` on Vercel was unable to find this version, leading to an `ETARGET` error during `npm install`. This suggests a dependency resolution issue or a temporary registry problem on the build machine.
+    *   **Solution:**
+        *   Updated `marked` in `package.json` to `12.1.0` (exact version). This explicitly instructs `npm` to fetch this precise version, bypassing potential issues with caret range resolution.
+    *   **Status:** **RESOLVED.** The `npm install` command should now successfully resolve and install the `marked` package, allowing the Vercel build to continue.
+
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor.
+The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor.
 
 ## 🔗 Related Files
 

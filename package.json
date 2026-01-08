@@ -2,10 +2,11 @@
   "name": "markdown-resume-editor",
   "version": "1.0.0",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "html2pdf.js": "^0.10.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

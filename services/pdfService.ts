@@ -1,5 +1,5 @@
-// This file assumes html2pdf.bundle.min.js is loaded globally via index.html script tag.
-// The `html2pdf` object is expected to be available on `window`.
+// html2pdf.js is now imported as an ES module from its npm package.
+import html2pdf from 'html2pdf.js';
 
 interface Html2PdfOptions {
   margin?: number | [number, number, number, number]; // Top, Left, Bottom, Right
@@ -10,32 +10,8 @@ interface Html2PdfOptions {
 }
 
 /**
- * Waits for the html2pdf library to be available on the window object.
- * @param timeout The maximum time to wait in milliseconds.
- * @param interval The interval between checks in milliseconds.
- * @returns A promise that resolves with the html2pdf object or rejects if timeout is reached.
- */
-const waitForHtml2Pdf = (timeout = 5000, interval = 100): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    let elapsed = 0;
-    const checkInterval = setInterval(() => {
-      if (typeof window !== 'undefined' && (window as any).html2pdf) {
-        clearInterval(checkInterval);
-        resolve((window as any).html2pdf);
-      } else {
-        elapsed += interval;
-        if (elapsed >= timeout) {
-          clearInterval(checkInterval);
-          reject(new Error('html2pdf.js did not load within the specified timeout.'));
-        }
-      }
-    }, interval);
-  });
-};
-
-/**
  * Exports an HTML element to a PDF file.
- * Requires html2pdf.js library to be loaded in the global scope.
+ * Requires html2pdf.js library to be installed as a project dependency and imported.
  *
  * @param element The HTML element to convert to PDF.
  * @param filename The name of the output PDF file.
@@ -43,8 +19,6 @@ const waitForHtml2Pdf = (timeout = 5000, interval = 100): Promise<any> => {
  */
 export const exportToPdf = async (element: HTMLElement, filename: string = 'resume.pdf', options?: Html2PdfOptions) => {
   try {
-    const html2pdf = await waitForHtml2Pdf(); // Wait for the html2pdf library to load
-
     const defaultOptions: Html2PdfOptions = {
       margin: 10,
       filename: filename,

@@ -67,9 +67,17 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Explicitly added `"vite.config.ts"` to the `exclude` array in `tsconfig.json`. This prevented `tsc` from trying to compile it, thus resolving all the `vite.config.ts`-related errors without needing to add Vite dependencies to a non-Vite project.
     *   **Status:** **RESOLVED.** All compilation errors have been successfully addressed, and the application now builds and deploys without issues on Vercel.
 
+9.  **Feature: Enable HTML Passthrough and Robust Markdown Parsing with Styling**
+    *   **Diagnosis:** The initial `convertMarkdownToHtml` function used simple regex, preventing raw HTML from rendering correctly and not providing full Markdown spec support.
+    *   **Solution:**
+        *   Integrated `marked` library for comprehensive Markdown-to-HTML conversion, including raw HTML passthrough.
+        *   Integrated `DOMPurify` library for sanitizing all generated HTML, mitigating XSS risks when allowing raw HTML input.
+        *   Modified `convertMarkdownToHtml` to first parse Markdown with `marked`, then sanitize with `DOMPurify`, and finally use DOM manipulation to apply the predefined Tailwind CSS classes from the selected `StylePreset` to the relevant HTML elements.
+    *   **Status:** **RESOLVED.** The editor now correctly renders raw HTML embedded in Markdown, and all existing styling presets continue to function as expected, with added security.
+
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation and deployment configuration issues have been resolved. The application is now fully functional and accessible online.
+The Resume Studio application successfully builds and deploys to Vercel, and now supports raw HTML passthrough within the Markdown editor. All identified TypeScript compilation, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online.
 
 ## 🔗 Related Files
 
@@ -77,7 +85,7 @@ The Resume Studio application successfully builds and deploys to Vercel. All ide
 *   `types.ts`, `constants.ts`: Type definitions and static data.
 *   `services/pdfService.ts`: PDF export logic.
 *   `utils/cssUtils.ts`: Custom CSS prefixing utility.
-*   `package.json`: Project dependencies and build scripts.
+*   `package.json`: Project dependencies and build scripts. **(Modified)**
 *   `tsconfig.json`: TypeScript compiler configuration.
 *   `vercel.json`: Vercel deployment configuration.
-*   `README.md`: Project overview and setup instructions.
+*   `README.md`: Project overview and setup instructions. **(Modified)**

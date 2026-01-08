@@ -1,4 +1,6 @@
 import React, { useRef, useMemo, useEffect } from 'react';
+import { marked } from 'marked'; // Import marked
+import DOMPurify from 'dompurify'; // Import DOMPurify
 import { StylePreset, StyleClasses } from '../types.js'; // Added .js extension
 // Removed import of prefixCss as it's moved to a separate utility file
 
@@ -8,84 +10,74 @@ interface ResumePreviewProps {
   // customCss prop is no longer needed here as it will be applied globally
 }
 
-// A simple markdown to HTML converter.
-// This is a minimal implementation for the purpose of this demo.
-// For robust markdown parsing, a library like `marked` or `react-markdown` would be used.
+/**
+ * Converts Markdown content to HTML, sanitizes it, and applies Tailwind CSS classes
+ * from the active style preset to the generated HTML elements.
+ *
+ * This function now uses the `marked` library for robust Markdown parsing, which
+ * includes support for raw HTML passthrough. `DOMPurify` is used to sanitize
+ * the HTML output, preventing potential Cross-Site Scripting (XSS) vulnerabilities.
+ *
+ * @param markdown The Markdown content to convert.
+ * @param classes The StyleClasses object from the active StylePreset.
+ * @returns An HTML string with applied styles and sanitization.
+ */
 const convertMarkdownToHtml = (markdown: string, classes: StyleClasses): string => {
-  let html = markdown;
+  if (!markdown) return '';
 
-  // Replace HR
-  html = html.replace(/^---\s*$/gm, `<hr class="${classes.hr || ''}" />`);
+  // 1. Parse markdown to HTML using marked
+  // Configure marked for GitHub Flavored Markdown (GFM) and other common options.
+  const rawHtml = marked.parse(markdown, {
+    gfm: true,        // Enable GitHub Flavored Markdown
+    breaks: true,     // Convert newlines to <br> tags (useful for resumes)
+    mangle: false,    // Do not mangle email addresses
+    headerIds: false, // Do not generate header IDs
+  }) as string; // marked.parse returns string | Promise<string>, cast for synchronous use
 
-  // Headings
-  html = html.replace(/^###### (.*$)/gm, `<h6 class="${classes.h6 || ''}">$1</h6>`);
-  html = html.replace(/^##### (.*$)/gm, `<h5 class="${classes.h5 || ''}">$1</h5>`);
-  html = html.replace(/^#### (.*$)/gm, `<h4 class="${classes.h4 || ''}">$1</h4>`);
-  html = html.replace(/^### (.*$)/gm, `<h3 class="${classes.h3 || ''}">$1</h3>`);
-  html = html.replace(/^## (.*$)/gm, `<h2 class="${classes.h2 || ''}">$1</h2>`);
-  html = html.replace(/^# (.*$)/gm, `<h1 class="${classes.h1 || ''}">$1</h1>`);
-
-  // Bold and Italic (order matters for overlapping)
-  html = html.replace(/\*\*\*(.*?)\*\*\*/g, `<strong class="${classes.strong || ''}"><em class="${classes.em || ''}">$1</em></strong>`);
-  html = html.replace(/\*\*(.*?)\*\*/g, `<strong class="${classes.strong || ''}">$1</strong>`);
-  html = html.replace(/\*(.*?)\*/g, `<em class="${classes.em || ''}">$1</em>`);
-  html = html.replace(/__(.*?)__/g, `<strong class="${classes.strong || ''}">$1</strong>`);
-  html = html.replace(/_(.*?)_/g, `<em class="${classes.em || ''}">$1</em>`);
-
-  // Links
-  html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<a href="$2" class="${classes.a || ''}" target="_blank" rel="noopener noreferrer">$1</a>`);
-
-  // Blockquote
-  html = html.replace(/^> (.*$)/gm, `<blockquote class="${classes.blockquote || ''}"><p>${(classes.p || '') ? `<span class="${classes.p}">` : ''}$1${(classes.p || '') ? '</span>' : ''}</p></blockquote>`);
-
-  // Inline Code
-  html = html.replace(/`([^`]+)`/g, `<code class="${classes.code || ''}">$1</code>`);
-
-  // Code Blocks (simple, assumes fenced code blocks without language specifiers)
-  html = html.replace(/```\n([\s\S]*?)\n```/g, `<pre class="${classes.pre || ''}"><code class="${classes.code || ''}">$1</code></pre>`);
-
-  // Lists (simple: assumes one list type per block and single level)
-  const ulRegex = /^((\*|-)\s+.*(\n(\*|-)\s+.*)*)+/gm;
-  html = html.replace(ulRegex, (match) => {
-    const items = match.split('\n').map(line => {
-      const trimmedLine = line.replace(/(\*|-)\s+/, '').trim();
-      return `<li class="${classes.li || ''}">${(classes.p || '') ? `<span class="${classes.p}">` : ''}${trimmedLine}${(classes.p || '') ? '</span>' : ''}</li>`;
-    }).join('');
-    return `<ul class="${classes.ul || ''}">${items}</ul>`;
+  // 2. Sanitize HTML - CRITICAL for security when allowing raw HTML passthrough
+  // We forbid script tags and common event attributes for a resume context.
+  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+    USE_PROFILES: { html: true }, // Allow standard HTML elements and attributes
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed'], // Restrict potentially dangerous tags
+    FORBID_ATTR: ['onerror', 'onload', 'onmouseover', 'onmouseout', 'onfocus', 'onblur', 'onclick', 'ondblclick'], // Restrict event handlers
   });
 
-  const olRegex = /^((\d+\.)\s+.*(\n(\d+\.)\s+.*)*)+/gm;
-  html = html.replace(olRegex, (match) => {
-    const items = match.split('\n').map(line => {
-      const trimmedLine = line.replace(/(\d+\.)\s+/, '').trim();
-      return `<li class="${classes.li || ''}">${(classes.p || '') ? `<span class="${classes.p}">` : ''}${trimmedLine}${(classes.p || '') ? '</span>' : ''}</li>`;
-    }).join('');
-    return `<ol class="${classes.ol || ''}">${items}</ol>`;
+  // 3. Create a temporary DOM element to apply classes dynamically
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = sanitizedHtml;
+
+  // 4. Apply Tailwind CSS classes from the style preset to the generated HTML elements
+  // Iterate over each style type (key) defined in StyleClasses
+  const elementTypesToStyle: (keyof StyleClasses)[] = [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'a',
+    'strong', 'em', 'blockquote', 'code', 'pre', 'table', 'th', 'td', 'hr'
+  ];
+
+  elementTypesToStyle.forEach(type => {
+    const classString = classes[type];
+    if (classString) {
+      // Determine the HTML tag selector based on the StyleClasses key
+      let selector: string = type.toString(); // Works for h1, p, ul, ol, li, a, blockquote, pre, table, th, td, hr
+
+      // Special handling for elements that might have different Markdown-to-HTML mappings
+      if (type === 'strong') {
+        selector = 'strong';
+      } else if (type === 'em') {
+        selector = 'em';
+      } else if (type === 'code') {
+        // `marked` generates `<code>` for both inline code and within `<pre>` blocks
+        selector = 'code';
+      }
+
+      tempDiv.querySelectorAll(selector).forEach(element => {
+        // Split classString by space and add each class individually
+        element.classList.add(...classString.split(' ').filter(Boolean));
+      });
+    }
   });
 
-  // Paragraphs (must be done last to not interfere with other block elements)
-  html = html.split('\n\n').map(block => {
-    // If block is empty or already handled by other parsers (e.g., headings, lists, blockquotes, code blocks, HR)
-    if (block.trim() === '' || block.match(/<\/?h\d|<ul|<ol|<blockquote|<pre|<hr/)) {
-        return block;
-    }
-    // Check if the block consists of a single line that's an HR
-    if (block.trim().match(/^---\s*$/)) {
-        return block;
-    }
-    // Wrap remaining lines that are not part of other blocks in paragraphs.
-    // This is a very simplified paragraph handling. Real Markdown parsers are more complex.
-    const lines = block.split('\n').filter(line => line.trim() !== '');
-    if (lines.length > 0) {
-      return `<p class="${classes.p || ''}">${lines.join('<br>')}</p>`;
-    }
-    return '';
-  }).join('\n');
-
-  // Remove empty lines from output
-  html = html.split('\n').filter(line => line.trim() !== '').join('\n');
-
-  return html;
+  // Return the inner HTML of the temporary div, which now contains sanitized and styled content
+  return tempDiv.innerHTML;
 };
 
 // Moved prefixCss to utils/cssUtils.ts

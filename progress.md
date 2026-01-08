@@ -2,7 +2,7 @@
 
 This document outlines the development journey, key decisions, and current status of the Resume Studio application.
 
-## 📅 Last Updated: [Current Date, e.g., 2023-11-20]
+## 📅 Last Updated: 2023-11-20 (Revised)
 
 ## 📜 Project Goal
 
@@ -25,21 +25,22 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
     *   **Solution (Current app code):** Manually added `.js` extensions to all relative import paths in the application's `.tsx` and `.ts` files.
     *   **Status:** **RESOLVED.** The application now runs correctly locally and can be transpiled into browser-executable JavaScript.
 
-3.  **Problem: Vercel Deployment Failure (after blank screen fix)**
-    *   **Diagnosis:** Vercel was still failing to deploy, even though the local build process (`npm run build`) was correct and produced the `build/` directory with all necessary `.js` and static assets. The issue appeared to be Vercel's interpretation of the project type and output.
+3.  **Problem: Vercel Deployment Failure (after blank screen fix) - Iteration 1**
+    *   **Diagnosis:** Vercel was still failing to deploy, even though the local build process (`npm run build`) was correct and produced the `build/` directory. The issue appeared to be Vercel's interpretation of the project type and output.
+    *   **Solution (Attempt 1):** Modified `vercel.json` to be highly explicit with `"type": "static"`, `"outputDirectory": "build"`, `"buildCommand": "npm run build"`, and `"installCommand": "npm install"`.
+    *   **Result:** **FAILED.** Vercel logs showed an error: "should NOT have additional property `type`". The `type` property is not valid at the root level of `vercel.json`.
+
+4.  **Problem: Vercel Deployment Failure (after blank screen fix) - Iteration 2**
+    *   **Diagnosis:** The explicit `type: "static"` property in `vercel.json` was causing a schema validation error, indicating it's not a supported root-level configuration. Vercel usually infers the static site type from `outputDirectory` and `buildCommand`.
     *   **Solution (Current attempt):**
-        *   Updated `package.json`'s `build` script to include `&& ls -R build` at the end. This prints the contents of the `build` directory to Vercel's logs, allowing for verification that files are correctly generated.
-        *   Modified `vercel.json` to be highly explicit:
-            *   Set `"type": "static"`
-            *   Set `"outputDirectory": "build"`
-            *   Set `"buildCommand": "npm run build"`
-            *   Set `"installCommand": "npm install"`
-            *   Removed `"framework": null` to reduce ambiguity.
-    *   **Current Status:** **PENDING VERIFICATION.** This latest set of changes aims to provide Vercel with unambiguous instructions to resolve the deployment failure. We need to push these changes and observe the new Vercel logs.
+        *   Removed the invalid `type: "static"` property from `vercel.json`.
+        *   Retained `outputDirectory: "build"`, `buildCommand: "npm run build"`, and `installCommand: "npm install"` to provide clear instructions for building and serving the static `build` folder.
+        *   Kept the `ls -R build` command in `package.json`'s `build` script to aid in debugging by displaying build output in Vercel logs.
+    *   **Current Status:** **PENDING VERIFICATION.** This latest set of changes aims to adhere to Vercel's `vercel.json` schema while providing necessary build instructions. We need to push these changes and observe the new Vercel logs.
 
 ## ➡️ Next Steps
 
-*   **Deploy current changes:** Push the updated `package.json` and `vercel.json` to GitHub and allow Vercel to attempt a new deployment.
+*   **Deploy current changes:** Push the updated `vercel.json` to GitHub and allow Vercel to attempt a new deployment.
 *   **Analyze Vercel logs:** Carefully review the new Vercel build logs, especially the output of `ls -R build`, to confirm if the `build/` directory is correctly populated and if Vercel proceeds to deploy.
 *   **Troubleshoot (if necessary):** If deployment still fails, the `ls -R build` output will be critical for the next diagnostic step, indicating if the `build` directory itself is the problem or if Vercel is still misinterpreting the final output.
 

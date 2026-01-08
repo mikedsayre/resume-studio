@@ -172,8 +172,8 @@ const App: React.FC = () => {
         {/* Markdown Editor Panel */}
         <section className="flex-1 p-4 sm:p-6 border-r border-gray-700 dark:border-gray-300 lg:min-h-0 min-h-[45vh] flex flex-col">
           <h2 className="font-rajdhani text-xl sm:text-2xl font-bold text-gray-200 dark:text-gray-800 mb-3 flex items-center">
-            Markdown Editor
-            <InfoIcon id="editor-info" tooltipText="Write your resume using Markdown syntax. Changes are reflected instantly in the preview." />
+            Markdown/HTML Editor
+            <InfoIcon id="editor-info" tooltipText="Write your resume using Markdown syntax, including raw HTML. Changes are reflected instantly in the preview." />
           </h2>
           <MarkdownEditor value={markdownContent} onChange={handleMarkdownChange} />
         </section>

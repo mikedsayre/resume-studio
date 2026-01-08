@@ -42,8 +42,9 @@ const HelpModal: React.FC<HelpModalProps> = ({ show, onClose }) => {
             <h4 className="font-rajdhani text-xl font-semibold text-indigo-300 dark:text-indigo-600 mb-2">How it Works:</h4>
             <ul className="list-disc list-inside space-y-1">
               <li>
-                <strong>Markdown Editor:</strong> Write your resume content using standard Markdown syntax on the left panel.
-                Changes are reflected in real-time on the right preview panel.
+                <strong>Markdown/HTML Editor:</strong> Write your resume content using standard Markdown syntax on the left panel.
+                You can also embed raw HTML directly for advanced layouts. Changes are reflected in real-time on the right preview panel.
+                All HTML content is automatically sanitized for security.
               </li>
               <li>
                 <strong>Resume Preview:</strong> See an instant, styled preview of your resume. This is exactly how it will look when exported to PDF.

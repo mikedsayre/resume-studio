@@ -4,7 +4,7 @@ A professional and futuristic markdown resume editor that empowers you to craft 
 
 ## ✨ Features
 
-*   **Real-time Markdown Editor:** Write your resume content in Markdown and see instant updates in a live preview.
+*   **Real-time Markdown/HTML Editor:** Write your resume content in Markdown, optionally including raw HTML, and see instant updates in a live preview.
 *   **HTML Passthrough Support:** Embed raw HTML directly within your Markdown for advanced customization and intricate layouts. (All HTML is sanitized for security).
 *   **Dynamic Style Presets:** Choose from a selection of professionally designed, futuristic themes to transform your resume's aesthetic.
 *   **Advanced Custom CSS:** Unleash your creativity with an integrated CSS editor to finely tune or completely overhaul your resume's appearance.

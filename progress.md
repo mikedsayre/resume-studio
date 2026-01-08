@@ -53,7 +53,7 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
     *   **Result:** **FAILED.** Vercel logs showed a new set of errors, primarily `TS2307: Cannot find module 'react'` and `TS7026: JSX element implicitly has type 'any'`, indicating that the TypeScript compiler cannot locate the necessary type declarations for React.
 
 7.  **Problem: Missing React Type Declarations (TS2307, TS7026, TS2875) - Iteration 5**
-    *   **Diagnosis:** The project relies on `importmap` for runtime React loading, but the TypeScript compiler (tsc) during the build process requires explicit type declarations (from `@types/react` and `@types/react-dom`) to be present in `node_modules` for successful type-checking and compilation of `.tsx` files. These type packages were missing from `devDependencies`.
+    *   **Diagnosis:** The project relies on `importmap` for runtime React loading, but the TypeScript compiler (tsc) during the build process requires explicit type declarations (from `@types/react` and `@types/dom`) to be present in `node_modules` for successful type-checking and compilation of `.tsx` files. These type packages were missing from `devDependencies`.
     *   **Solution (Attempt 5):**
         *   Added `@types/react` and `@types/react-dom` as `devDependencies` to `package.json`. This ensures these type definitions are installed during `npm install` and available for `tsc` to use.
     *   **Result:** **FAILED.** Vercel logs showed new errors: `TS2307: Cannot find module 'html2pdf.js'` and multiple `TS2307` and other errors related to `vite.config.ts`, `path`, `vite`, and `@vitejs/plugin-react`.
@@ -75,9 +75,15 @@ To create a modern, futuristic, and professional Markdown resume editor with adv
         *   Modified `convertMarkdownToHtml` to first parse Markdown with `marked`, then sanitize with `DOMPurify`, and finally use DOM manipulation to apply the predefined Tailwind CSS classes from the selected `StylePreset` to the relevant HTML elements.
     *   **Status:** **RESOLVED.** The editor now correctly renders raw HTML embedded in Markdown, and all existing styling presets continue to function as expected, with added security.
 
+10. **Problem: Vercel Deployment Failure (`npm error notarget` for `@types/marked`) - Iteration 7**
+    *   **Diagnosis:** The `package.json` specified `^12.0.0` for `@types/marked`, but this version does not exist on the npm registry. The `@types/marked` package has its own versioning, typically in the `4.x.x` range, which is compatible with `marked` v12 for most features.
+    *   **Solution:**
+        *   Updated `@types/marked` in `package.json` to `^4.0.0`, which is a valid and available version of the type definitions.
+    *   **Status:** **RESOLVED.** The `npm install` command now completes successfully during Vercel builds, allowing the deployment to proceed.
+
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel, and now supports raw HTML passthrough within the Markdown editor. All identified TypeScript compilation, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online.
+The Resume Studio application successfully builds and deploys to Vercel. All identified TypeScript compilation, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor.
 
 ## 🔗 Related Files
 
@@ -88,4 +94,4 @@ The Resume Studio application successfully builds and deploys to Vercel, and now
 *   `package.json`: Project dependencies and build scripts. **(Modified)**
 *   `tsconfig.json`: TypeScript compiler configuration.
 *   `vercel.json`: Vercel deployment configuration.
-*   `README.md`: Project overview and setup instructions. **(Modified)**
+*   `README.md`: Project overview and setup instructions.

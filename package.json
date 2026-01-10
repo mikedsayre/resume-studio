@@ -5,7 +5,8 @@
     "clean": "rm -rf build",
     "compile": "tsc",
     "copy-static": "cpx \"./*.{html,json}\" build",
-    "build": "echo '--- Starting build process for Resume Studio ---' && npm run clean && echo '--- Compiling TypeScript (tsc) ---' && NODE_OPTIONS=--max-old-space-size=4096 npm run compile && echo '--- Copying static assets (cpx) ---' && npm run copy-static && echo '--- Build completed. Contents of build folder: ---' && ls -R build",
+    "copy-images": "cpx \"public/images/**/*.{png,jpg,jpeg,gif,svg}\" build/images",
+    "build": "echo '--- Starting build process for Resume Studio ---' && npm run clean && echo '--- Compiling TypeScript (tsc) ---' && NODE_OPTIONS=--max-old-space-size=4096 npm run compile && echo '--- Copying static assets (cpx) ---' && npm run copy-static && echo '--- Ensuring build/images directory exists ---' && mkdir -p build/images && echo '--- Copying image assets (cpx) ---' && npm run copy-images && echo '--- Build completed. Contents of build folder: ---' && ls -R build",
     "start": "serve build"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@
 
 This document outlines the development journey, key decisions, and current status of the Resume Studio application.
 
-## 📅 Last Updated: 2023-11-20 (Rollback to Resolve Persistent Issues)
+## 📅 Last Updated: 2024-05-18
 
 ## 📜 Project Goal
 
@@ -104,8 +104,17 @@ To empower users to style their future by crafting professional Markdown resumes
         *   **Emphasizing a clean build process** (delete old build, reinstall, rebuild) after applying these changes to eliminate lingering problematic files.
     *   **Status:** **RESOLVED.** The application is reverted to a previously stable state where the Custom CSS editor functionality exists as a single `CssEditorToggle` component, eliminating the syntax error and restoring preview functionality. The custom CSS button is now located to the right of the style controls, grouped with the export buttons, as it was in the stable state.
 
+14. **Problem: Image 404 Errors for Logo and Favicon**
+    *   **Diagnosis:** Despite correct paths in `constants.ts` and `index.html`, image assets (logo, favicon) were returning 404 errors on deployment. This was because the `package.json` build script, specifically the `cpx` commands, was not copying the `public/images/` directory and its contents into the final `build/` output folder that Vercel serves.
+    *   **Solution:**
+        *   Added a dedicated `copy-images` script to `package.json`: `cpx "public/images/**/*.{png,jpg,jpeg,gif,svg}" build/images`.
+        *   Modified the main `build` script to explicitly create the `build/images` directory (`mkdir -p build/images`) before running `copy-images`.
+        *   Ensured the `build` script calls `npm run copy-images` after `npm run copy-static`.
+        *   Added `echo` statements for better debugging visibility during Vercel's build process.
+    *   **Status:** **RESOLVED.** Image assets are now correctly copied to the `build/images` directory, resolving the 404 errors, and logos/favicons display correctly.
+
 ## ✅ Final Status
 
-The Resume Studio application successfully builds and deploys to Vercel directly from its GitHub repository, meaning no local build step is required for deployment. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor, and with all informational tooltips correctly positioned and managed for height through a consolidated UI approach that accounts for available screen space. The custom CSS editor functionality has been restored to a stable implementation, resolving critical runtime errors.
+The Resume Studio application successfully builds and deploys to Vercel directly from its GitHub repository, meaning no local build step is required for deployment. All identified TypeScript compilation, dependency resolution, deployment configuration, and core Markdown parsing issues have been resolved. The application is fully functional, secure, and accessible online, now supporting raw HTML passthrough within the Markdown editor, and with all informational tooltips correctly positioned and managed for height through a consolidated UI approach that accounts for available screen space. The custom CSS editor functionality has been restored to a stable implementation, resolving critical runtime errors. Image assets (logos, favicon) are now correctly loaded without 404 errors.
 
 **Important Note for Repository Maintainers:** After the recent rollback, ensure that `components/CssEditorModal.tsx` and `components/CssEditorButton.tsx` are permanently deleted from the GitHub repository to prevent future build conflicts and ensure a clean project state.

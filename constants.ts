@@ -217,5 +217,5 @@ export const STYLE_PRESETS: { [key in StylePresetName]: StylePreset } = {
   },
 };
 
-export const HEADER_LOGO_PATH = '/images/header-logo-placeholder.svg';
-export const FOOTER_LOGO_PATH = '/images/footer-logo-placeholder.svg';
+export const HEADER_LOGO_PATH = '/resume-studio-mascot-256px.png';
+export const FOOTER_LOGO_PATH = '/resume-studio-mascot-256px.png';

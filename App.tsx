@@ -117,7 +117,7 @@ const App: React.FC = () => {
                 Resume Studio
               </h1>
               <span className="text-xs sm:text-sm font-light text-gray-400 dark:text-gray-500 mt-1">
-                Craft Your Future. Effortlessly.
+                Style Your Future.
               </span>
               <a
                 href="https://swanlakedigital.com"

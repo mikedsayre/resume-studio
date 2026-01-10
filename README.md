@@ -1,6 +1,6 @@
-# 🚀 Resume Studio
+# 🚀 Resume Studio: Style Your Future
 
-A professional and futuristic markdown resume editor that empowers you to craft stunning resumes with unparalleled ease and style. Developed to provide a seamless UI/UX for modern job seekers.
+A professional markdown resume editor that empowers you to style your future by crafting stunning resumes with unparalleled ease and style. Developed to provide a seamless UI/UX for modern job seekers.
 
 ## ✨ Features
 

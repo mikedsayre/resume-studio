@@ -6,7 +6,7 @@ This document outlines the development journey, key decisions, and current statu
 
 ## 📜 Project Goal
 
-To create a modern, futuristic, and professional Markdown resume editor with advanced CSS styling, PDF/Google Doc export capabilities, and a light/dark theme toggle.
+To empower users to style their future by crafting professional Markdown resumes with advanced styling, PDF/HTML export, and a light/dark theme toggle.
 
 ## 🛠️ Key Issues Addressed & Solutions
 

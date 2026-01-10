@@ -4,27 +4,40 @@ import { Theme } from '../types.js'; // Added .js extension
 interface ThemeToggleProps {
   currentTheme: Theme;
   onToggle: (theme: Theme) => void;
+  displayAsText?: boolean; // New prop to control display style
 }
 
-const ThemeToggle: React.FC<ThemeToggleProps> = ({ currentTheme, onToggle }) => {
+const ThemeToggle: React.FC<ThemeToggleProps> = ({ currentTheme, onToggle, displayAsText = false }) => {
   const isDark = currentTheme === Theme.Dark;
 
   const toggleTheme = () => {
     onToggle(isDark ? Theme.Light : Theme.Dark);
   };
 
+  const buttonClasses = displayAsText
+    ? `px-3 py-1 text-sm rounded-md shadow-sm transition-all duration-300 hover:scale-105
+       bg-gray-700 hover:bg-gray-600 dark:bg-gray-100 dark:hover:bg-gray-200
+       text-gray-100 dark:text-gray-800 flex items-center gap-1.5
+       focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400`
+    : `p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
+       focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
+       hover:scale-105 transition-all duration-300 shadow-md`;
+
+  const iconClasses = displayAsText ? 'w-4 h-4' : 'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6';
+
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                 hover:scale-105 transition-all duration-300 shadow-md"
+      className={buttonClasses}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
     >
+      {displayAsText && (
+        <span>{`Theme: ${isDark ? 'Dark' : 'Light'}`}</span>
+      )}
       {isDark ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
+          className={iconClasses}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -39,7 +52,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ currentTheme, onToggle }) => 
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
+          className={iconClasses}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

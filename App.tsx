@@ -4,12 +4,17 @@ import MarkdownEditor from './components/MarkdownEditor.js';
 import ResumePreview from './components/ResumePreview.js';
 import StyleControls from './components/StyleControls.js';
 import ExportButtons from './components/ExportButtons.js';
-import CssEditorToggle from './components/CssEditorToggle.js'; // Reverted to CssEditorToggle
+// Removed CssEditorButton import
+import CssEditorModal from './components/CssEditorModal.js';
 import CssViewer from './components/CssViewer.js';
 import HelpModal from './components/HelpModal.js';
-import InfoIcon from './components/InfoIcon.js';
 import { Theme, StylePresetName } from './types.js';
-import { DEFAULT_MARKDOWN_CONTENT, STYLE_PRESETS } from './constants.js';
+import {
+  DEFAULT_MARKDOWN_CONTENT,
+  STYLE_PRESETS,
+  HEADER_LOGO_PATH,
+  FOOTER_LOGO_PATH,
+} from './constants.js';
 import { exportToPdf } from './services/pdfService.js';
 import { prefixCss } from './utils/cssUtils.js';
 
@@ -97,68 +102,74 @@ const App: React.FC = () => {
       {prefixedCustomCss && <style>{prefixedCustomCss}</style>}
 
       <header className="w-full max-w-7xl bg-gray-800 dark:bg-white rounded-xl shadow-xl transition-colors duration-300 mb-4 flex flex-col p-4 sm:p-3">
-        <div className="flex justify-between items-center w-full pb-3 sm:pb-2 border-b border-gray-700 dark:border-gray-300 mb-3 sm:mb-2">
-          <div className="flex items-end">
-            <h1 className="font-rajdhani text-2xl sm:text-3xl font-extrabold text-indigo-400 dark:text-indigo-700 tracking-wide">
-              Resume Studio
-            </h1>
-            <a
-              href="https://swanlakedigital.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-2 text-gray-400 dark:text-gray-500 text-sm hover:underline hover:text-indigo-400 dark:hover:text-indigo-600 transition-colors duration-200"
-              aria-label="Visit Swan Lake Digital website"
-            >
-              by swan lake digital
-            </a>
+        {/* Top row: Logo, Title, Tagline, Brand, and Utility Buttons (Help, Theme, View CSS) */}
+        <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end w-full pb-3 sm:pb-2 border-b border-gray-700 dark:border-gray-300 mb-3 sm:mb-2">
+          {/* Logo and Title Group */}
+          <div className="flex items-end mb-2 sm:mb-0">
+            <img
+              src={HEADER_LOGO_PATH}
+              alt="Resume Studio Logo"
+              className="w-[4em] h-[4em] object-contain mr-2 leading-none"
+              aria-hidden="true"
+            />
+            <div className="flex flex-col items-start">
+              <h1 className="font-rajdhani text-2xl sm:text-3xl font-extrabold text-indigo-400 dark:text-indigo-700 tracking-wide">
+                Resume Studio
+              </h1>
+              <span className="text-xs sm:text-sm font-light text-gray-400 dark:text-gray-500 mt-1">
+                Craft Your Future. Effortlessly.
+              </span>
+              <a
+                href="https://swanlakedigital.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-0.5 text-gray-400 dark:text-gray-500 text-xs hover:underline hover:text-indigo-400 dark:hover:text-indigo-600 transition-colors duration-200"
+                aria-label="Visit Swan Lake Digital website"
+              >
+                by swan lake digital
+              </a>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
+
+          {/* Utility Buttons */}
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-x-2 gap-y-1">
             <button
               onClick={() => setShowHelpModal(true)}
-              className="p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                         hover:scale-105 transition-all duration-300 shadow-md"
+              className="px-3 py-1 text-sm rounded-md shadow-sm transition-all duration-300 hover:scale-105
+                         bg-gray-700 hover:bg-gray-600 dark:bg-gray-100 dark:hover:bg-gray-200
+                         text-gray-100 dark:text-gray-800
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
               aria-label="Open Help and Readme"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.784.47-1.391 1.254-1.391 2.115v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              Help
             </button>
-            <ThemeToggle currentTheme={currentTheme} onToggle={handleThemeToggle} />
+            <ThemeToggle currentTheme={currentTheme} onToggle={handleThemeToggle} displayAsText={true} />
             <button
               onClick={() => setShowCssViewer(true)}
-              className="p-2 rounded-full bg-gray-700 dark:bg-gray-100 text-gray-100 dark:text-gray-800
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                         hover:scale-105 transition-all duration-300 shadow-md"
+              className="px-3 py-1 text-sm rounded-md shadow-sm transition-all duration-300 hover:scale-105
+                         bg-gray-700 hover:bg-gray-600 dark:bg-gray-100 dark:hover:bg-gray-200
+                         text-gray-100 dark:text-gray-800
+                         focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
               aria-label="View current style preset CSS"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 8.25H9.75a2.25 2.25 0 00-2.25 2.25v.75A2.25 2.25 0 019.75 13.5h.75m-3 0l3-3m-3 3l3 3m6.75-9V8.25a2.25 2.25 0 00-2.25-2.25H16.5m-3 0l3-3m-3 3l3 3m-.75-9h4.5a2.25 2.25 0 012.25 2.25v4.5a2.25 2.25 0 01-2.25 2.25h-2.25" />
-              </svg>
+              View Style CSS
             </button>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center gap-x-3 gap-y-2 w-full">
+        {/* Second row: Style Controls and Export/Custom CSS Buttons */}
+        <div className="flex flex-col items-center gap-y-3 sm:flex-row sm:flex-wrap sm:justify-between sm:items-center sm:gap-x-3 sm:gap-y-2 w-full">
           <StyleControls
             selectedPreset={selectedStylePreset}
             onSelectPreset={handleStylePresetChange}
-            // setShowCssEditor is no longer passed here
           />
-          <div className="flex items-center gap-2"> {/* Group ExportButtons and CssEditorToggle */}
-            <ExportButtons
-              onExportPdf={handleExportPdf}
-              onCopyMarkdown={handleCopyMarkdown}
-              onCopyHtml={handleCopyHtml}
-            />
-            {/* CssEditorToggle is here */}
-            <CssEditorToggle
-              customCssContent={customCssContent}
-              setCustomCssContent={setCustomCssContent}
-              showCssEditor={showCssEditor}
-              setShowCssEditor={setShowCssEditor}
-            />
-          </div>
+          <ExportButtons
+            onExportPdf={handleExportPdf}
+            onCopyMarkdown={handleCopyMarkdown}
+            onCopyHtml={handleCopyHtml}
+            showCssEditor={showCssEditor}
+            onToggleCssEditor={() => setShowCssEditor(!showCssEditor)}
+          />
         </div>
       </header>
 
@@ -167,7 +178,9 @@ const App: React.FC = () => {
         <section className="flex-1 p-4 sm:p-6 border-r border-gray-700 dark:border-gray-300 lg:min-h-0 min-h-[45vh] flex flex-col">
           <h2 className="font-rajdhani text-xl sm:text-2xl font-bold text-gray-200 dark:text-gray-800 mb-3 flex items-center">
             Markdown Editor
-            <InfoIcon id="editor-info" tooltipText="Write your resume using Markdown syntax, including raw HTML. Changes are reflected instantly in the preview." />
+            <span className="text-[0.75rem] leading-[0.85rem] sm:text-xs md:text-sm text-gray-400 dark:text-gray-500 ml-2">
+              Write your resume using Markdown syntax, including raw HTML. Changes are reflected instantly.
+            </span>
           </h2>
           <MarkdownEditor value={markdownContent} onChange={handleMarkdownChange} />
         </section>
@@ -175,7 +188,9 @@ const App: React.FC = () => {
         <section className="flex-1 p-4 sm:p-6 lg:min-h-0 min-h-[45vh] flex flex-col">
           <h2 className="font-rajdhani text-xl sm:text-2xl font-bold text-gray-200 dark:text-gray-800 mb-3 flex items-center">
             Resume Preview
-            <InfoIcon id="preview-info" tooltipText="See how your resume will look with the selected style. This is what will be exported." />
+            <span className="text-[0.75rem] leading-[0.85rem] sm:text-xs md:text-sm text-gray-400 dark:text-gray-500 ml-2">
+              See how your resume will look with the selected style. This is what will be exported.
+            </span>
           </h2>
           <ResumePreview
             ref={previewRef}
@@ -185,13 +200,27 @@ const App: React.FC = () => {
         </section>
       </div>
 
-      <footer className="mt-6 text-center text-gray-500 dark:text-gray-400 text-sm font-inter">
-        Made by Google AI Studio and <a href="https://swanlakedigital.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 dark:text-indigo-600 hover:underline">swanlakedigital.com</a> &copy; {currentYear}
+      <footer className="mt-6 flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 text-sm font-inter">
+        <img
+          src={FOOTER_LOGO_PATH}
+          alt="Swan Lake Digital Logo"
+          className="w-[4em] h-[4em] object-contain mb-2 leading-none"
+          aria-hidden="true"
+        />
+        <span>
+          Made by Google AI Studio and <a href="https://swanlakedigital.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 dark:text-indigo-600 hover:underline">swanlakedigital.com</a> &copy; {currentYear}
+        </span>
       </footer>
 
       <CssViewer show={showCssViewer} onClose={() => setShowCssViewer(false)} stylePreset={STYLE_PRESETS[selectedStylePreset]} />
       <HelpModal show={showHelpModal} onClose={() => setShowHelpModal(false)} />
-      {/* CssEditorToggle handles its own modal internally, so CssEditorModal is not needed here */}
+
+      <CssEditorModal
+        show={showCssEditor}
+        onClose={() => setShowCssEditor(false)}
+        customCssContent={customCssContent}
+        setCustomCssContent={setCustomCssContent}
+      />
     </div>
   );
 };

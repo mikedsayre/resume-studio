@@ -1,7 +1,7 @@
 import React from 'react';
 import { StylePresetName } from '../types.js';
 import { STYLE_PRESETS } from '../constants.js';
-import InfoIcon from './InfoIcon.js';
+// InfoIcon is no longer used in StyleControls
 // CssEditorButton import removed
 
 interface StyleControlsProps {
@@ -16,7 +16,7 @@ const StyleControls: React.FC<StyleControlsProps> = ({ selectedPreset, onSelectP
       <label htmlFor="style-preset-select" className="text-gray-200 dark:text-gray-800 text-sm font-medium">
         Style:
       </label>
-      <div className="flex items-center gap-1"> {/* Group select and info icon */}
+      <div className="flex items-center gap-1"> {/* Group select and info text */}
         <select
           id="style-preset-select"
           value={selectedPreset}
@@ -34,10 +34,9 @@ const StyleControls: React.FC<StyleControlsProps> = ({ selectedPreset, onSelectP
             </option>
           ))}
         </select>
-        <InfoIcon
-          id="style-preset-info"
-          tooltipText="Select a predefined styling preset to change the look and feel of your resume."
-        />
+        <span className="text-[0.75rem] leading-[0.85rem] sm:text-xs md:text-sm text-gray-400 dark:text-gray-500">
+          Select a predefined styling preset.
+        </span>
       </div>
     </div>
   );
